@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.apache.cassandra</groupId>
+    <artifactId>cassandra-all</artifactId>
+    <version>5.0.6-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Apache Cassandra</name>
+    <description>
+        Apache Cassandra is a free and open-source, distributed, wide column store,
+        NoSQL database management system designed to handle large amounts of data
+        across many commodity servers, providing high availability with no single point of failure.
+    </description>
+    <url>https://cassandra.apache.org/</url>
+
+    <properties>
+        <!-- Project Properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+
+        <!-- Core Dependency Versions -->
+        <antlr.version>3.5.2</antlr.version>
+        <asm.version>9.4</asm.version>
+        <caffeine.version>2.9.3</caffeine.version>
+        <chronicle.version>2.21e.3</chronicle.version>
+        <commons-cli.version>1.5.0</commons-cli.version>
+        <commons-codec.version>1.15</commons-codec.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <concurrent-trees.version>2.6.1</concurrent-trees.version>
+        <ecj.version>3.33.0</ecj.version>
+        <guava.version>31.1-jre</guava.version>
+        <jackson.version>2.13.3</jackson.version>
+        <jamm.version>0.4.0</jamm.version>
+        <jboss-logging.version>3.4.3.Final</jboss-logging.version>
+        <jflex.version>1.8.2</jflex.version>
+        <joda-time.version>2.10.14</joda-time.version>
+        <json-simple.version>1.1.1</json-simple.version>
+        <metrics.version>4.2.9</metrics.version>
+        <netty.version>4.1.77.Final</netty.version>
+        <snakeyaml.version>1.30</snakeyaml.version>
+        <slf4j.version>1.7.36</slf4j.version>
+        <logback.version>1.2.11</logback.version>
+
+        <!-- Test Dependency Versions -->
+        <assertj.version>3.23.1</assertj.version>
+        <junit.version>4.13.2</junit.version>
+        <mockito.version>4.6.1</mockito.version>
+        <jmh.version>1.35</jmh.version>
+
+        <!-- Plugin Versions -->
+        <build-helper-plugin.version>3.3.0</build-helper-plugin.version>
+        <checkstyle-plugin.version>3.2.0</checkstyle-plugin.version>
+        <compiler-plugin.version>3.10.1</compiler-plugin.version>
+        <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
+        <failsafe-plugin.version>3.0.0-M7</failsafe-plugin.version>
+        <jar-plugin.version>3.3.0</jar-plugin.version>
+        <source-plugin.version>3.2.1</source-plugin.version>
+        <javadoc-plugin.version>3.4.1</javadoc-plugin.version>
+        <assembly-plugin.version>3.4.2</assembly-plugin.version>
+        <rat-plugin.version>0.13</rat-plugin.version>
+        <git-commit-id-plugin.version>5.0.0</git-commit-id-plugin.version>
+        <jacoco.version>0.8.8</jacoco.version>
+
+        <!-- Test Properties from build.xml -->
+        <cassandra.test.use_prepared>true</cassandra.test.use_prepared>
+        <cassandra.keepBriefBrief>true</cassandra.keepBriefBrief>
+        <test.name>*Test</test.name>
+        <test.timeout>480000</test.timeout>
+    </properties>
+
+    <scm>
+        <connection>scm:https://gitbox.apache.org/repos/asf/cassandra.git</connection>
+        <developerConnection>scm:https://gitbox.apache.org/repos/asf/cassandra.git</developerConnection>
+        <url>https://gitbox.apache.org/repos/asf?p=cassandra.git</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <dependencies>
+        <!-- Core Dependencies -->
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-runtime</artifactId>
+            <version>${antlr.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.concurrent-trees</groupId>
+            <artifactId>concurrent-trees</artifactId>
+            <version>${concurrent-trees.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-buffer</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>${asm.version}</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.github.jamm</groupId>-->
+<!--            <artifactId>jamm</artifactId>-->
+<!--            <version>${jamm.version}</version>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>${metrics.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-jmx</artifactId>
+            <version>${metrics.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>${commons-cli.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda-time.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>ecj</artifactId>
+            <version>${ecj.version}</version>
+        </dependency>
+
+        <!-- Test Dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>${jmh.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>${jmh.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler-plugin.version}</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                    <compilerArgs>
+                        <arg>-XDignore.symbol.file</arg>
+                        <arg>--add-exports=java.rmi/sun.rmi.registry=ALL-UNNAMED</arg>
+                        <arg>--add-exports=java.rmi/sun.rmi.transport.tcp=ALL-UNNAMED</arg>
+                        <arg>--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED</arg>
+                        <arg>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <!-- Corresponds to: Ant's testmacro -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire-plugin.version}</version>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Multi-Release>true</Multi-Release>
+                            <Implementation-Title>Cassandra</Implementation-Title>
+                            <Implementation-Vendor>Apache</Implementation-Vendor>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- Corresponds to: Ant's sources-jar target -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${source-plugin.version}</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Multi-Release>true</Multi-Release>
+                            <Implementation-Title>Cassandra</Implementation-Title>
+                            <Implementation-Vendor>Apache</Implementation-Vendor>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Corresponds to: Ant's artifacts target (tar.gz creation) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${assembly-plugin.version}</version>
+                <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>single</goal>
+                    </goals>
+                </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>
