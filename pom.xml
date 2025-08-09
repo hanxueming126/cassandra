@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ====================================================================== -->
+    <!-- PARENT POM (From ASF) -->
+    <!-- ====================================================================== -->
+    <parent>
+        <groupId>org.apache</groupId>
+        <artifactId>apache</artifactId>
+        <version>22</version>
+    </parent>
+
+    <!-- ====================================================================== -->
+    <!-- PROJECT COORDINATES (GAV) -->
+    <!-- ====================================================================== -->
+    <groupId>org.apache.cassandra</groupId>
+    <artifactId>cassandra-all</artifactId>
+    <version>4.1.10-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <!-- ====================================================================== -->
+    <!-- PROJECT INFORMATION -->
+    <!-- ====================================================================== -->
+    <name>Apache Cassandra</name>
+    <description>
+        The Apache Cassandra Project develops a highly scalable second-generation distributed database,
+        bringing together Dynamo's fully distributed design and Bigtable's ColumnFamily-based data model.
+    </description>
+    <url>https://cassandra.apache.org</url>
+    <inceptionYear>2009</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:https://gitbox.apache.org/repos/asf/cassandra.git</connection>
+        <developerConnection>scm:https://gitbox.apache.org/repos/asf/cassandra.git</developerConnection>
+        <url>https://gitbox.apache.org/repos/asf?p=cassandra.git</url>
+    </scm>
+    
+    <!-- ====================================================================== -->
+    <!-- PROPERTIES -->
+    <!-- ====================================================================== -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
+        <!-- Dependency Versions from build.xml -->
+        <jamm.version>0.3.2</jamm.version>
+        <byteman.version>4.0.6</byteman.version>
+        <jacoco.version>0.8.6</jacoco.version>
+        <bytebuddy.version>1.10.10</bytebuddy.version>
+        <asm.version>9.1</asm.version>
+        <allocation-instrumenter.version>3.1.0</allocation-instrumenter.version>
+        <netty.version>4.1.58.Final</netty.version>
+        <chronicle-queue.version>5.20.123</chronicle-queue.version>
+        <chronicle-core.version>2.20.126</chronicle-core.version>
+        <chronicle-bytes.version>2.20.111</chronicle-bytes.version>
+        <chronicle-wire.version>2.20.117</chronicle-wire.version>
+        <chronicle-threads.version>2.20.111</chronicle-threads.version>
+
+        <!-- Test Properties -->
+        <test.timeout>480000</test.timeout>
+        <test.long.timeout>600000</test.long.timeout>
+        <test.burn.timeout>60000000</test.burn.timeout>
+        <test.distributed.timeout>900000</test.distributed.timeout>
+        
+        <!-- Default surefire argLine, can be overridden by profiles -->
+        <surefire.argLine>-ea -Xss256k -javaagent:${settings.localRepository}/com/github/jbellis/jamm/jamm/${jamm.version}/jamm-${jamm.version}.jar</surefire.argLine>
+    </properties>
+
+    <!-- ====================================================================== -->
+    <!-- DEPENDENCY MANAGEMENT (versions for all dependencies) -->
+    <!-- ====================================================================== -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- BOMs -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.10.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Regular Managed Dependencies from build.xml -->
+            <dependency><groupId>org.xerial.snappy</groupId><artifactId>snappy-java</artifactId><version>1.1.10.4</version></dependency>
+            <dependency><groupId>org.lz4</groupId><artifactId>lz4-java</artifactId><version>1.8.0</version></dependency>
+            <dependency><groupId>com.github.luben</groupId><artifactId>zstd-jni</artifactId><version>1.5.7-2</version></dependency>
+            <dependency><groupId>com.google.guava</groupId><artifactId>guava</artifactId><version>27.0-jre</version></dependency>
+            <dependency><groupId>com.google.jimfs</groupId><artifactId>jimfs</artifactId><version>1.1</version></dependency>
+            <dependency><groupId>org.hdrhistogram</groupId><artifactId>HdrHistogram</artifactId><version>2.1.12</version></dependency>
+            <dependency><groupId>commons-cli</groupId><artifactId>commons-cli</artifactId><version>1.1</version></dependency>
+            <dependency><groupId>commons-codec</groupId><artifactId>commons-codec</artifactId><version>1.9</version></dependency>
+            <dependency><groupId>commons-io</groupId><artifactId>commons-io</artifactId><version>2.6</version></dependency>
+            <dependency><groupId>org.apache.commons</groupId><artifactId>commons-lang3</artifactId><version>3.11</version></dependency>
+            <dependency><groupId>org.apache.commons</groupId><artifactId>commons-math3</artifactId><version>3.2</version></dependency>
+            <dependency><groupId>org.antlr</groupId><artifactId>antlr</artifactId><version>3.5.2</version></dependency>
+            <dependency><groupId>org.antlr</groupId><artifactId>ST4</artifactId><version>4.0.8</version></dependency>
+            <dependency><groupId>org.antlr</groupId><artifactId>antlr-runtime</artifactId><version>3.5.2</version></dependency>
+            <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId><version>1.7.25</version></dependency>
+            <dependency><groupId>org.slf4j</groupId><artifactId>log4j-over-slf4j</artifactId><version>1.7.25</version></dependency>
+            <dependency><groupId>org.slf4j</groupId><artifactId>jcl-over-slf4j</artifactId><version>1.7.25</version></dependency>
+            <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-core</artifactId><version>1.2.9</version></dependency>
+            <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-classic</artifactId><version>1.2.9</version></dependency>
+            <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-core</artifactId><version>2.13.2</version></dependency>
+            <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-databind</artifactId><version>2.13.2.2</version></dependency>
+            <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-annotations</artifactId><version>2.13.2</version></dependency>
+            <dependency><groupId>com.fasterxml.jackson.datatype</groupId><artifactId>jackson-datatype-jsr310</artifactId><version>2.13.2</version></dependency>
+            <dependency><groupId>com.fasterxml.jackson.dataformat</groupId><artifactId>jackson-dataformat-yaml</artifactId><version>2.13.2</version></dependency>
+            <dependency><groupId>com.googlecode.json-simple</groupId><artifactId>json-simple</artifactId><version>1.1</version></dependency>
+            <dependency><groupId>com.boundary</groupId><artifactId>high-scale-lib</artifactId><version>1.0.6</version></dependency>
+            <dependency><groupId>com.github.jbellis</groupId><artifactId>jamm</artifactId><version>${jamm.version}</version></dependency>
+            <dependency><groupId>org.yaml</groupId><artifactId>snakeyaml</artifactId><version>1.26</version></dependency>
+            <dependency><groupId>junit</groupId><artifactId>junit</artifactId><version>4.12</version></dependency>
+            <dependency><groupId>org.mockito</groupId><artifactId>mockito-core</artifactId><version>3.2.4</version></dependency>
+            <dependency><groupId>org.quicktheories</groupId><artifactId>quicktheories</artifactId><version>0.26</version></dependency>
+            <dependency><groupId>com.google.code.java-allocation-instrumenter</groupId><artifactId>java-allocation-instrumenter</artifactId><version>${allocation-instrumenter.version}</version></dependency>
+            <dependency><groupId>org.reflections</groupId><artifactId>reflections</artifactId><version>0.10.2</version></dependency>
+            <dependency><groupId>com.puppycrawl.tools</groupId><artifactId>checkstyle</artifactId><version>8.40</version></dependency>
+            <dependency><groupId>net.java.dev.jna</groupId><artifactId>jna</artifactId><version>5.9.0</version></dependency>
+            <dependency><groupId>org.jacoco</groupId><artifactId>org.jacoco.agent</artifactId><version>${jacoco.version}</version></dependency>
+            <dependency><groupId>org.jboss.byteman</groupId><artifactId>byteman-install</artifactId><version>${byteman.version}</version></dependency>
+            <dependency><groupId>org.jboss.byteman</groupId><artifactId>byteman</artifactId><version>${byteman.version}</version></dependency>
+            <dependency><groupId>org.jboss.byteman</groupId><artifactId>byteman-submit</artifactId><version>${byteman.version}</version></dependency>
+            <dependency><groupId>org.jboss.byteman</groupId><artifactId>byteman-bmunit</artifactId><version>${byteman.version}</version></dependency>
+            <dependency><groupId>net.bytebuddy</groupId><artifactId>byte-buddy</artifactId><version>${bytebuddy.version}</version></dependency>
+            <dependency><groupId>net.bytebuddy</groupId><artifactId>byte-buddy-agent</artifactId><version>${bytebuddy.version}</version></dependency>
+            <dependency><groupId>org.openjdk.jmh</groupId><artifactId>jmh-core</artifactId><version>1.37</version></dependency>
+            <dependency><groupId>org.openjdk.jmh</groupId><artifactId>jmh-generator-annprocess</artifactId><version>1.37</version></dependency>
+            <dependency><groupId>org.apache.ant</groupId><artifactId>ant-junit</artifactId><version>1.10.12</version></dependency>
+            <dependency><groupId>io.dropwizard.metrics</groupId><artifactId>metrics-core</artifactId><version>3.1.5</version></dependency>
+            <dependency><groupId>io.dropwizard.metrics</groupId><artifactId>metrics-jvm</artifactId><version>3.1.5</version></dependency>
+            <dependency><groupId>io.dropwizard.metrics</groupId><artifactId>metrics-logback</artifactId><version>3.1.5</version></dependency>
+            <dependency><groupId>com.addthis.metrics</groupId><artifactId>reporter-config3</artifactId><version>3.0.3</version></dependency>
+            <dependency><groupId>org.mindrot</groupId><artifactId>jbcrypt</artifactId><version>0.4</version></dependency>
+            <dependency><groupId>io.airlift</groupId><artifactId>airline</artifactId><version>0.8</version></dependency>
+            <dependency><groupId>io.netty</groupId><artifactId>netty-tcnative-boringssl-static</artifactId><version>2.0.36.Final</version></dependency>
+            <dependency><groupId>net.openhft</groupId><artifactId>chronicle-queue</artifactId><version>${chronicle-queue.version}</version></dependency>
+            <dependency><groupId>net.openhft</groupId><artifactId>chronicle-core</artifactId><version>${chronicle-core.version}</version></dependency>
+            <dependency><groupId>net.openhft</groupId><artifactId>chronicle-bytes</artifactId><version>${chronicle-bytes.version}</version></dependency>
+            <dependency><groupId>net.openhft</groupId><artifactId>chronicle-wire</artifactId><version>${chronicle-wire.version}</version></dependency>
+            <dependency><groupId>net.openhft</groupId><artifactId>chronicle-threads</artifactId><version>${chronicle-threads.version}</version></dependency>
+            <dependency><groupId>com.google.code.findbugs</groupId><artifactId>jsr305</artifactId><version>2.0.2</version></dependency>
+            <dependency><groupId>com.clearspring.analytics</groupId><artifactId>stream</artifactId><version>2.5.2</version></dependency>
+            <dependency><groupId>com.datastax.cassandra</groupId><artifactId>cassandra-driver-core</artifactId><version>3.11.0</version><classifier>shaded</classifier></dependency>
+            <dependency><groupId>org.eclipse.jdt.core.compiler</groupId><artifactId>ecj</artifactId><version>4.6.1</version></dependency>
+            <dependency><groupId>org.caffinitas.ohc</groupId><artifactId>ohc-core</artifactId><version>0.5.1</version></dependency>
+            <dependency><groupId>org.caffinitas.ohc</groupId><artifactId>ohc-core-j8</artifactId><version>0.5.1</version></dependency>
+            <dependency><groupId>net.ju-n.compile-command-annotations</groupId><artifactId>compile-command-annotations</artifactId><version>1.2.0</version></dependency>
+            <dependency><groupId>org.fusesource</groupId><artifactId>sigar</artifactId><version>1.6.4</version></dependency>
+            <dependency><groupId>com.carrotsearch</groupId><artifactId>hppc</artifactId><version>0.8.1</version></dependency>
+            <dependency><groupId>de.jflex</groupId><artifactId>jflex</artifactId><version>1.8.2</version></dependency>
+            <dependency><groupId>com.github.rholder</groupId><artifactId>snowball-stemmer</artifactId><version>1.3.0.581.1</version></dependency>
+            <dependency><groupId>com.googlecode.concurrent-trees</groupId><artifactId>concurrent-trees</artifactId><version>2.4.0</version></dependency>
+            <dependency><groupId>com.github.ben-manes.caffeine</groupId><artifactId>caffeine</artifactId><version>2.9.2</version></dependency>
+            <dependency><groupId>org.jctools</groupId><artifactId>jctools-core</artifactId><version>3.1.0</version></dependency>
+            <dependency><groupId>org.ow2.asm</groupId><artifactId>asm</artifactId><version>${asm.version}</version></dependency>
+            <dependency><groupId>org.ow2.asm</groupId><artifactId>asm-tree</artifactId><version>${asm.version}</version></dependency>
+            <dependency><groupId>org.ow2.asm</groupId><artifactId>asm-commons</artifactId><version>${asm.version}</version></dependency>
+            <dependency><groupId>org.ow2.asm</groupId><artifactId>asm-util</artifactId><version>${asm.version}</version></dependency>
+            <dependency><groupId>org.gridkit.jvmtool</groupId><artifactId>sjk-cli</artifactId><version>0.14</version></dependency>
+            <dependency><groupId>org.gridkit.jvmtool</groupId><artifactId>sjk-core</artifactId><version>0.14</version></dependency>
+            <dependency><groupId>org.gridkit.jvmtool</groupId><artifactId>sjk-stacktrace</artifactId><version>0.14</version></dependency>
+            <dependency><groupId>org.gridkit.jvmtool</groupId><artifactId>mxdump</artifactId><version>0.14</version></dependency>
+            <dependency><groupId>org.gridkit.lab</groupId><artifactId>jvm-attach-api</artifactId><version>1.5</version></dependency>
+            <dependency><groupId>org.gridkit.jvmtool</groupId><artifactId>sjk-json</artifactId><version>0.14</version></dependency>
+            <dependency><groupId>com.beust</groupId><artifactId>jcommander</artifactId><version>1.30</version></dependency>
+            <dependency><groupId>org.psjava</groupId><artifactId>psjava</artifactId><version>0.1.19</version></dependency>
+            <dependency><groupId>javax.inject</groupId><artifactId>javax.inject</artifactId><version>1</version></dependency>
+            <dependency><groupId>com.google.j2objc</groupId><artifactId>j2objc-annotations</artifactId><version>1.3</version></dependency>
+            <dependency><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId><version>3.25.3</version></dependency>
+            <dependency><groupId>org.awaitility</groupId><artifactId>awaitility</artifactId><version>4.0.3</version></dependency>
+            <dependency><groupId>org.hamcrest</groupId><artifactId>hamcrest</artifactId><version>2.2</version></dependency>
+            <dependency><groupId>com.github.seancfoley</groupId><artifactId>ipaddress</artifactId><version>5.3.3</version></dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- ====================================================================== -->
+    <!-- PROJECT DEPENDENCIES -->
+    <!-- ====================================================================== -->
+    <dependencies>
+        <!-- Compile scope dependencies -->
+        <dependency><groupId>org.xerial.snappy</groupId><artifactId>snappy-java</artifactId></dependency>
+        <dependency><groupId>org.lz4</groupId><artifactId>lz4-java</artifactId></dependency>
+        <dependency><groupId>com.github.luben</groupId><artifactId>zstd-jni</artifactId></dependency>
+        <dependency><groupId>com.google.guava</groupId><artifactId>guava</artifactId></dependency>
+        <dependency><groupId>commons-cli</groupId><artifactId>commons-cli</artifactId></dependency>
+        <dependency><groupId>commons-codec</groupId><artifactId>commons-codec</artifactId></dependency>
+        <dependency><groupId>org.apache.commons</groupId><artifactId>commons-lang3</artifactId></dependency>
+        <dependency><groupId>org.apache.commons</groupId><artifactId>commons-math3</artifactId></dependency>
+        <dependency><groupId>org.antlr</groupId><artifactId>ST4</artifactId></dependency>
+        <dependency><groupId>org.antlr</groupId><artifactId>antlr-runtime</artifactId></dependency>
+        <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId></dependency>
+        <dependency><groupId>org.slf4j</groupId><artifactId>log4j-over-slf4j</artifactId></dependency>
+        <dependency><groupId>org.slf4j</groupId><artifactId>jcl-over-slf4j</artifactId></dependency>
+        <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-core</artifactId></dependency>
+        <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-databind</artifactId></dependency>
+        <dependency><groupId>com.fasterxml.jackson.datatype</groupId><artifactId>jackson-datatype-jsr310</artifactId></dependency>
+        <dependency><groupId>com.googlecode.json-simple</groupId><artifactId>json-simple</artifactId></dependency>
+        <dependency><groupId>com.boundary</groupId><artifactId>high-scale-lib</artifactId></dependency>
+        <dependency><groupId>org.yaml</groupId><artifactId>snakeyaml</artifactId></dependency>
+        <dependency><groupId>org.mindrot</groupId><artifactId>jbcrypt</artifactId></dependency>
+        <dependency><groupId>io.airlift</groupId><artifactId>airline</artifactId></dependency>
+        <dependency><groupId>io.dropwizard.metrics</groupId><artifactId>metrics-core</artifactId></dependency>
+        <dependency><groupId>io.dropwizard.metrics</groupId><artifactId>metrics-jvm</artifactId></dependency>
+        <dependency><groupId>io.dropwizard.metrics</groupId><artifactId>metrics-logback</artifactId></dependency>
+        <dependency><groupId>com.addthis.metrics</groupId><artifactId>reporter-config3</artifactId></dependency>
+        <dependency><groupId>com.clearspring.analytics</groupId><artifactId>stream</artifactId></dependency>
+        <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-core</artifactId></dependency>
+        <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-classic</artifactId></dependency>
+        <dependency><groupId>net.java.dev.jna</groupId><artifactId>jna</artifactId></dependency>
+        <dependency><groupId>com.github.jbellis</groupId><artifactId>jamm</artifactId></dependency>
+        <dependency><groupId>io.netty</groupId><artifactId>netty-all</artifactId></dependency>
+        <dependency><groupId>net.openhft</groupId><artifactId>chronicle-queue</artifactId></dependency>
+        <dependency><groupId>org.fusesource</groupId><artifactId>sigar</artifactId></dependency>
+        <dependency><groupId>org.eclipse.jdt.core.compiler</groupId><artifactId>ecj</artifactId></dependency>
+        <dependency><groupId>org.caffinitas.ohc</groupId><artifactId>ohc-core-j8</artifactId></dependency>
+        <dependency><groupId>com.github.ben-manes.caffeine</groupId><artifactId>caffeine</artifactId></dependency>
+        <dependency><groupId>org.jctools</groupId><artifactId>jctools-core</artifactId></dependency>
+        <dependency><groupId>org.ow2.asm</groupId><artifactId>asm</artifactId></dependency>
+        <dependency><groupId>com.carrotsearch</groupId><artifactId>hppc</artifactId></dependency>
+        <dependency><groupId>org.gridkit.jvmtool</groupId><artifactId>sjk-cli</artifactId></dependency>
+        <dependency><groupId>io.netty</groupId><artifactId>netty-tcnative-boringssl-static</artifactId></dependency>
+        <dependency><groupId>com.github.seancfoley</groupId><artifactId>ipaddress</artifactId></dependency>
+        <dependency><groupId>org.hdrhistogram</groupId><artifactId>HdrHistogram</artifactId></dependency>
+        <dependency><groupId>com.github.rholder</groupId><artifactId>snowball-stemmer</artifactId></dependency>
+        <dependency><groupId>com.googlecode.concurrent-trees</groupId><artifactId>concurrent-trees</artifactId></dependency>
+        <dependency><groupId>com.google.code.findbugs</groupId><artifactId>jsr305</artifactId></dependency>
+        <dependency><groupId>javax.inject</groupId><artifactId>javax.inject</artifactId></dependency>
+        
+        <!-- Provided Scope -->
+        <dependency><groupId>org.antlr</groupId><artifactId>antlr</artifactId><scope>provided</scope></dependency>
+        <dependency><groupId>net.ju-n.compile-command-annotations</groupId><artifactId>compile-command-annotations</artifactId><scope>provided</scope></dependency>
+        <dependency><groupId>org.jboss.byteman</groupId><artifactId>byteman-bmunit</artifactId><scope>provided</scope></dependency>
+
+        <!-- Optional Dependencies -->
+        <dependency><groupId>com.datastax.cassandra</groupId><artifactId>cassandra-driver-core</artifactId><classifier>shaded</classifier><optional>true</optional></dependency>
+
+        <!-- Test Scope Dependencies -->
+        <dependency><groupId>junit</groupId><artifactId>junit</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>org.mockito</groupId><artifactId>mockito-core</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>org.awaitility</groupId><artifactId>awaitility</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>org.hamcrest</groupId><artifactId>hamcrest</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>commons-io</groupId><artifactId>commons-io</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>com.google.jimfs</groupId><artifactId>jimfs</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>org.quicktheories</groupId><artifactId>quicktheories</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>com.puppycrawl.tools</groupId><artifactId>checkstyle</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>org.reflections</groupId><artifactId>reflections</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>org.openjdk.jmh</groupId><artifactId>jmh-core</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>org.openjdk.jmh</groupId><artifactId>jmh-generator-annprocess</artifactId><scope>test</scope></dependency>
+
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-core</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-minicluster</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.psjava</groupId>
+            <artifactId>psjava</artifactId>
+            <version>0.1.19</version>
+        </dependency>
+        <dependency>
+            <groupId>org.gridkit.jvmtool</groupId>
+            <artifactId>sjk-cli</artifactId>
+            <version>0.14</version>
+        </dependency>
+        <dependency>
+            <groupId>org.gridkit.jvmtool</groupId>
+            <artifactId>sjk-core</artifactId>
+            <version>0.14</version>
+        </dependency>
+        <dependency>
+            <groupId>org.gridkit.jvmtool</groupId>
+            <artifactId>sjk-stacktrace</artifactId>
+            <version>0.14</version>
+        </dependency>
+        <dependency>
+            <groupId>org.gridkit.jvmtool</groupId>
+            <artifactId>mxdump</artifactId>
+            <version>0.14</version>
+        </dependency>
+        <dependency>
+            <groupId>org.gridkit.lab</groupId>
+            <artifactId>jvm-attach-api</artifactId>
+            <version>1.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.gridkit.jvmtool</groupId>
+            <artifactId>sjk-json</artifactId>
+            <version>0.14</version>
+        </dependency>
+    </dependencies>
+
+    <!-- ====================================================================== -->
+    <!-- BUILD SECTION -->
+    <!-- ====================================================================== -->
+    <build>
+        <sourceDirectory>src/java</sourceDirectory>
+        <resources>
+            <resource><directory>src/resources</directory></resource>
+        </resources>
+
+        <finalName>apache-cassandra-${project.version}</finalName>
+
+        <plugins>
+
+            <plugin>
+                <groupId>de.jflex</groupId>
+                <artifactId>jflex-maven-plugin</artifactId>
+                <version>1.8.2</version>
+                <executions>
+                    <execution>
+                        <id>generate-jflex-java</id>
+                        <goals><goal>generate</goal></goals>
+                        <configuration>
+                            <lexDefinitions>
+                                <lexDefinition>${project.basedir}/src/java/org/apache/cassandra/index/sasi/analyzer/StandardTokenizerImpl.jflex</lexDefinition>
+                            </lexDefinitions>
+                            <outputDirectory>${project.basedir}/src/gen-java</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Compiler Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <compilerArgs>
+                        <arg>--add-exports=java.rmi/sun.rmi.registry=ALL-UNNAMED</arg>
+                        <arg>-XDignore.symbol.file</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            
+            <!-- JAR Plugin for Multi-Release JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Multi-Release>true</Multi-Release>
+                            <Implementation-Title>Cassandra</Implementation-Title>
+                            <Implementation-Vendor>Apache</Implementation-Vendor>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            
+            <!-- Surefire Plugin for running tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+            </plugin>
+            
+            <!-- Attach Sources and Javadoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions><execution><id>attach-sources</id><goals><goal>jar-no-fork</goal></goals></execution></executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions><execution><id>attach-javadocs</id><goals><goal>jar</goal></goals></execution></executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${basedir}/src/gen-java</directory>
+                            <includes>
+                                <include>**/*</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <profiles>
+        <!-- Profile to run LONG tests -->
+        <profile>
+            <id>long-tests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <!-- Profile to run BURN tests -->
+        <profile>
+            <id>burn-tests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Profile to run In-JVM DTests -->
+        <profile>
+            <id>d-tests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Profile to build STRESS tool -->
+        <profile>
+            <id>stress-tool</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>compile-stress</id>
+                                <phase>compile</phase>
+                                <goals><goal>compile</goal></goals>
+                                <configuration>
+                                    <source>${maven.compiler.source}</source>
+                                    <target>${maven.compiler.target}</target>
+                                    <includes><include>**/tools/stress/src/**/*.java</include></includes>
+                                    <outputDirectory>${project.build.directory}/classes/stress</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>package-stress</id>
+                                <phase>package</phase>
+                                <goals><goal>jar</goal></goals>
+                                <configuration>
+                                    <classesDirectory>${project.build.directory}/classes/stress</classesDirectory>
+                                    <finalName>stress</finalName>
+                                    <outputDirectory>${project.build.directory}/tools/lib</outputDirectory>
+                                    <archive>
+                                        <manifest>
+                                            <mainClass>org.apache.cassandra.stress.Stress</mainClass>
+                                        </manifest>
+                                    </archive>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Profile for building with Java 11 -->
+        <profile>
+            <id>java11</id>
+            <activation>
+                <jdk>[11,)</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.source>11</maven.compiler.source>
+                <maven.compiler.target>11</maven.compiler.target>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Profile to create final release artifacts (tar.gz files) -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>make-bin-tar-gz</id>
+                                <phase>package</phase>
+                                <goals><goal>single</goal></goals>
+                                <configuration>
+                                    <finalName>${project.build.finalName}-bin</finalName>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                    <descriptors>
+                                        <!-- You need to create this assembly descriptor -->
+                                        <descriptor>.build/assemblies/bin-assembly.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>make-src-tar-gz</id>
+                                <phase>package</phase>
+                                <goals><goal>single</goal></goals>
+                                <configuration>
+                                    <finalName>${project.build.finalName}-src</finalName>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                    <descriptors>
+                                        <!-- You need to create this assembly descriptor -->
+                                        <descriptor>.build/assemblies/src-assembly.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- For a real release, you would add maven-gpg-plugin here -->
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
